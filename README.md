@@ -13,8 +13,21 @@ If you haven't set these up yet, follow the one-time machine setup:
 
 From a freshly created repo:
 
+Install everything listed in `mise.toml`:
 ```sh
-mise install              # install all runtimes listed in mise.toml, resolves "latest", installs the current versions
-mise use python --pin     # freeze the installed python version into mise.toml
-uv sync                      # install Python deps; creates .venv on mise's Python
+mise install
 ```
+
+This template intentionally pins "latest" versions for everything, meaning you'll always start each new project with the latest versions.
+
+Once you've initialised a new project, it's a good idea to then freeze the versions:
+```sh
+mise use python --pin
+```
+
+Now, setup your Python environment using uv:
+```
+uv sync
+```
+
+>> uv will respect mise's Python version as its own.
