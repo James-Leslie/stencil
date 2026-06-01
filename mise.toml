@@ -1,0 +1,5 @@
+[tools]
+python = "latest"
+
+[env]
+UV_PYTHON = { value = "{{ tools.python.path }}", tools = true }
