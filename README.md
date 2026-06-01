@@ -14,6 +14,7 @@ If you haven't set these up yet, follow the one-time machine setup:
 From a freshly created repo:
 
 ```sh
-mise install                 # install the pinned Python + Node (and prek, just)
+mise install              # install all runtimes listed in mise.toml, resolves "latest", installs the current versions
+mise use python --pin     # freeze the installed python version into mise.toml
 uv sync                      # install Python deps; creates .venv on mise's Python
 ```
