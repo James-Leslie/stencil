@@ -1,0 +1,3 @@
+# https://mdformat.readthedocs.io/en/stable/users/configuration_file.html
+# Number ordered lists consecutively (1, 2, 3) rather than the default all-`1.`.
+number = true

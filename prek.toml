@@ -20,6 +20,16 @@ hooks = [
 ]
 
 [[repos]]
+repo = "https://github.com/hukkin/mdformat"
+rev = "1.0.0"
+hooks = [
+    # Format Markdown to a consistent CommonMark style. mdformat-gfm adds
+    # GitHub-flavored support (tables, task lists, strikethrough) so README
+    # constructs survive formatting instead of being escaped.
+    { id = "mdformat", additional_dependencies = ["mdformat-gfm"] },
+]
+
+[[repos]]
 repo = "local"
 hooks = [
     # `uv check` type-checks the whole project (via Astral's `ty`), so it
