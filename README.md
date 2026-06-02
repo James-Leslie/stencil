@@ -30,21 +30,7 @@ Now, setup your Python environment using uv:
 uv sync
 ```
 
-> uv will respect mise's Python version as its own.
-
-## 2. Git hooks (prek)
-
-This template uses [prek](https://prek.j178.dev) to run git hooks (configured in `prek.toml`).
-The prek binary is installed by `mise install` above; you just need to wire the hooks into your
-local `.git/hooks` once per clone:
+(Do once) Install prek’s Git shim integration:
 ```sh
 prek install
-```
-
-> `.git/hooks` is local-only and never pushed, so each fresh clone needs `prek install` again.
-> Cloud sessions handle this automatically via the SessionStart hook.
-
-Run the hooks manually against the whole repo at any time:
-```sh
-prek run --all-files
 ```
