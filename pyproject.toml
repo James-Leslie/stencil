@@ -15,3 +15,8 @@ build-backend = "uv_build"
 
 [tool.uv.build-backend]
 module-name = "core"
+
+[tool.uv]
+# use mise to manage Python
+python-preference = "only-system"
+python-downloads = "never"
