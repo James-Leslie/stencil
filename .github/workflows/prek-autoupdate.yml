@@ -1,0 +1,43 @@
+name: prek autoupdate
+
+# prek pins each hook repo to a fixed `rev` in prek.toml for reproducibility,
+# which means hooks don't update on their own (Dependabot doesn't cover them).
+# This job bumps those revs on a schedule and opens a PR so the update is
+# reviewed and CI-gated rather than landing silently.
+on:
+  schedule:
+    # Mondays at 06:00 UTC.
+    - cron: "0 6 * * 1"
+  workflow_dispatch: # allow manual runs from the Actions tab
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  autoupdate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      # Installs and activates the tools pinned in mise.toml (including prek),
+      # so this job uses the same prek version as local development and CI.
+      - name: Set up mise
+        uses: jdx/mise-action@v4
+
+      - name: Run prek autoupdate
+        run: prek autoupdate
+
+      - name: Open pull request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: "chore: prek autoupdate"
+          title: "chore: prek autoupdate"
+          body: |
+            Automated `prek autoupdate` run — bumps pinned hook `rev`s in `prek.toml`
+            to their latest releases.
+
+            Review the diff and let CI confirm the new versions before merging.
+          branch: chore/prek-autoupdate
+          delete-branch: true

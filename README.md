@@ -30,4 +30,7 @@ Now, setup your Python environment using uv:
 uv sync
 ```
 
-> uv will respect mise's Python version as its own.
+(Do once) Install prek’s Git shim integration:
+```sh
+prek install
+```

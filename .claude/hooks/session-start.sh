@@ -47,6 +47,10 @@ if [ -f frontend/package.json ]; then
   (cd frontend && pnpm install)
 fi
 
+# Wire up git hooks. prek's hook lives in .git/hooks, which is local-only and
+# recreated on every fresh clone, so it has to be reinstalled each session.
+prek install
+
 # Persist the toolchain on PATH for the rest of the session's Bash commands,
 # through $CLAUDE_ENV_FILE (the supported, non-interactive-safe channel) rather
 # than ~/.bashrc, which is guarded out of non-interactive shells.
