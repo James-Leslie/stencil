@@ -36,7 +36,10 @@ mise install
 eval "$(mise activate bash --shims)"
 
 # Python deps onto mise's interpreter (uv is pre-installed in the cloud image).
-uv sync
+# Guarded so a frontend-only project (Python half deleted) skips cleanly.
+if [ -f pyproject.toml ]; then
+  uv sync
+fi
 
 # Frontend deps only when the frontend half is present — projects created from
 # this template may delete frontend/, and the hook must skip cleanly when absent.
@@ -51,4 +54,7 @@ if [ -n "${CLAUDE_ENV_FILE:-}" ]; then
   mise activate bash --shims >> "$CLAUDE_ENV_FILE"
 fi
 
-echo "Toolchain ready (mise + uv$([ -f frontend/package.json ] && echo ' + pnpm'))."
+ready="mise"
+[ -f pyproject.toml ] && ready="$ready + uv"
+[ -f frontend/package.json ] && ready="$ready + pnpm"
+echo "Toolchain ready ($ready)."
