@@ -6,9 +6,10 @@
 # machine is already set up once-per-machine per the gist linked in the README,
 # so we exit early unless we're running remotely.
 #
-# Pairs with the cloud-environment setup script (see scripts/cloud-setup.sh),
-# which installs mise and pre-downloads the pinned runtimes into the cached
-# snapshot — making the steps below fast no-ops on subsequent sessions.
+# Optional speed-up: configure a setup script in the cloud environment (web UI)
+# that installs mise and pre-downloads the pinned runtimes into the cached
+# snapshot. This hook self-heals without one (it installs mise below) — just
+# more slowly on the first, uncached session.
 set -euo pipefail
 
 # Local sessions are already provisioned, so don't touch anything off-cloud.
@@ -18,8 +19,7 @@ fi
 
 cd "${CLAUDE_PROJECT_DIR:-$(pwd)}"
 
-# mise installs to ~/.local/bin (via the setup script); make sure it's on PATH,
-# and self-heal by installing it if the setup script hasn't run.
+# Ensure mise is on PATH, installing it if the cloud setup script hasn't.
 export PATH="$HOME/.local/bin:$PATH"
 if ! command -v mise >/dev/null 2>&1; then
   curl -fsSL https://mise.run | sh
@@ -30,7 +30,10 @@ fi
 # read an untrusted config file.
 mise trust
 mise install
-export PATH="$HOME/.local/share/mise/shims:$PATH"
+
+# Put mise's tools on PATH for the rest of this script. --shims is the
+# non-interactive-safe activation (plain PATH exports, no prompt hook).
+eval "$(mise activate bash --shims)"
 
 # Python deps onto mise's interpreter (uv is pre-installed in the cloud image).
 uv sync
@@ -41,9 +44,11 @@ if [ -f frontend/package.json ]; then
   (cd frontend && pnpm install)
 fi
 
-# Persist the toolchain on PATH for the rest of the session's Bash commands.
+# Persist the toolchain on PATH for the rest of the session's Bash commands,
+# through $CLAUDE_ENV_FILE (the supported, non-interactive-safe channel) rather
+# than ~/.bashrc, which is guarded out of non-interactive shells.
 if [ -n "${CLAUDE_ENV_FILE:-}" ]; then
-  echo 'export PATH="$HOME/.local/bin:$HOME/.local/share/mise/shims:$PATH"' >> "$CLAUDE_ENV_FILE"
+  mise activate bash --shims >> "$CLAUDE_ENV_FILE"
 fi
 
 echo "Toolchain ready (mise + uv$([ -f frontend/package.json ] && echo ' + pnpm'))."
