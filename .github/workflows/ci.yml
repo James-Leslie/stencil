@@ -28,10 +28,10 @@ jobs:
         run: uv sync
 
       - name: Lint
-        run: uv run ruff check .
+        run: uvx ruff check .
 
       - name: Format check
-        run: uv run ruff format --check .
+        run: uvx ruff format --check .
 
       - name: Type check
         run: uv check
