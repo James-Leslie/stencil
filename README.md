@@ -15,6 +15,7 @@ From a freshly created repo:
 
 Install everything listed in `mise.toml`:
 ```sh
+mise cache clear   # avoid resolving "latest" against a stale version cache
 mise install
 ```
 
