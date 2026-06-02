@@ -2,13 +2,17 @@ name: prek autoupdate
 
 # prek pins each hook repo to a fixed `rev` in prek.toml for reproducibility,
 # which means hooks don't update on their own (Dependabot doesn't cover them).
-# This job bumps those revs on a schedule and opens a PR so the update is
-# reviewed and CI-gated rather than landing silently.
+# The `autoupdate` job bumps those revs on a schedule and opens a PR so the
+# update is reviewed rather than landing silently. The `automerge` job then
+# squash-merges that PR once you approve it — scoped to the bot branch so your
+# other PRs are untouched.
 on:
   schedule:
     # Mondays at 06:00 UTC.
     - cron: "0 6 * * 1"
   workflow_dispatch: # allow manual runs from the Actions tab
+  pull_request_review:
+    types: [submitted] # react to approvals for the automerge job
 
 permissions:
   contents: write
@@ -16,6 +20,8 @@ permissions:
 
 jobs:
   autoupdate:
+    # Only for scheduled/manual runs, not the review event.
+    if: github.event_name != 'pull_request_review'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -41,3 +47,19 @@ jobs:
             Review the diff and let CI confirm the new versions before merging.
           branch: chore/prek-autoupdate
           delete-branch: true
+
+  automerge:
+    # Squash-merge the autoupdate PR once it's approved. Scoped to the bot's
+    # own branch so this never touches other PRs. The approval is a human
+    # action, so this event fires normally (unlike GITHUB_TOKEN-made events).
+    if: >
+      github.event_name == 'pull_request_review' &&
+      github.event.review.state == 'approved' &&
+      github.event.pull_request.head.ref == 'chore/prek-autoupdate'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Squash-merge the approved PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: gh pr merge --squash --delete-branch "$PR_URL"
