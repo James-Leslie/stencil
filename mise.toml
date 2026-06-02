@@ -1,3 +1,10 @@
 [tools]
 prek = "latest"
 python = "latest"
+
+[tasks.test]
+run = "uv run pytest"
+
+[tasks.check]
+depends = ["test"]
+run = "prek run --all-files"
