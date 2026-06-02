@@ -24,7 +24,6 @@ repo = "local"
 hooks = [
     # `uv check` type-checks the whole project (via Astral's `ty`), so it
     # ignores the staged filenames and runs once per commit. Scope it to
-    # changes that can affect type checking. `--preview-features check`
-    # silences the "experimental" warning while the command stabilises.
+    # changes that can affect type checking.
     { id = "uv-check", name = "uv check", entry = "uv check", language = "system", pass_filenames = false, files = '(\.py|pyproject\.toml|uv\.lock)$' },
 ]
