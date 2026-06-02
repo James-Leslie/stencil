@@ -27,14 +27,12 @@ jobs:
       - name: Sync dependencies
         run: uv sync
 
-      - name: Lint
-        run: uvx ruff check .
-
-      - name: Format check
-        run: uvx ruff format --check .
-
-      - name: Type check
-        run: uv check
+      # Run the same hooks as local development so prek.toml is the single
+      # source of truth for linting, formatting, and type checking (and their
+      # pinned versions). Fixers run in place; if any hook modifies a file the
+      # step exits non-zero, which blocks the PR — exactly the gate we want.
+      - name: Run prek hooks
+        run: prek run --all-files
 
       - name: Test
         run: uv run pytest
