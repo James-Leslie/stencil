@@ -49,10 +49,7 @@ fi
 
 # Wire up git hooks. prek's hook lives in .git/hooks, which is local-only and
 # recreated on every fresh clone, so it has to be reinstalled each session.
-# Guarded on a prek config + a .git dir so non-prek projects skip cleanly.
-if [ -f prek.toml ] && [ -d .git ] && command -v prek >/dev/null 2>&1; then
-  prek install
-fi
+prek install
 
 # Persist the toolchain on PATH for the rest of the session's Bash commands,
 # through $CLAUDE_ENV_FILE (the supported, non-interactive-safe channel) rather
