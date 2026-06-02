@@ -1,6 +1,2 @@
 [tools]
 python = "latest"
-
-[env]
-# ensure uv uses mise's managed Python interpreter
-UV_PYTHON = { value = "{{ tools.python.path }}", tools = true }
