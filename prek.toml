@@ -9,3 +9,12 @@ hooks = [
     { id = "end-of-file-fixer" },
     { id = "check-added-large-files" },
 ]
+
+[[repos]]
+repo = "https://github.com/astral-sh/ruff-pre-commit"
+rev = "v0.15.15"
+hooks = [
+    # ruff-check runs before ruff-format so --fix lands before formatting.
+    { id = "ruff-check", args = ["--fix"] },
+    { id = "ruff-format" },
+]
