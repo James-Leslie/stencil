@@ -95,6 +95,22 @@ installs frontend deps when `frontend/package.json` exists. To add one:
 2. Scaffold a SvelteKit app into `frontend/`.
 3. The cloud session hook will pick it up automatically on the next session.
 
+## 6. Claude Code skills
+
+The template ships **user-invocable skills** under `.claude/skills/` — saved
+prompts you trigger with `/<name>` inside a Claude Code session. They're
+marked `disable-model-invocation: true`, so they cost zero context until you
+invoke them and Claude never reaches for them on its own. You have to know
+they exist — hence this list:
+
+| Skill          | What it does                                                                                                |
+| -------------- | ----------------------------------------------------------------------------------------------------------- |
+| `/add-fastapi` | Scaffolds a minimal FastAPI app (health endpoint + `mise run serve` task + test) into the existing package. |
+
+To add your own, drop a `SKILL.md` under `.claude/skills/<name>/` with
+frontmatter `description:` and `disable-model-invocation: true`, then list it
+here.
+
 [mise]: https://mise.jdx.dev
 [prek]: https://prek.j178.dev
 [uv]: https://docs.astral.sh/uv/
