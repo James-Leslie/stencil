@@ -24,6 +24,12 @@ If you haven't set these up yet, follow the one-time machine setup:
 
 ## 1. Getting Started
 
+Create a new repo from this template with the GitHub CLI:
+
+```sh
+gh repo create my-project --template James-Leslie/stencil --private --clone
+```
+
 From a freshly created repo, install everything pinned in `mise.toml`:
 
 ```sh
