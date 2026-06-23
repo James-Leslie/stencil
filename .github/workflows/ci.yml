@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       # Installs and activates the tools pinned in mise.toml (python, prek),
       # so CI uses the same runtime definition as local development.
