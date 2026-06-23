@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       # Installs and activates the tools pinned in mise.toml (including prek),
       # so this job uses the same prek version as local development and CI.
