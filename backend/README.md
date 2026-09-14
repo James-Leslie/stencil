@@ -1,1 +1,1 @@
-Backend: FastAPI, served by Vercel at `/api`.
+Backend: FastAPI, an ASGI app exposed at `core.server:app` and served under `/api`.

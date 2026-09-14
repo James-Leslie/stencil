@@ -1,10 +1,10 @@
 # stencil
 
-A project template: FastAPI and Svelte, deployed as one Vercel project.
+A project template: FastAPI and Svelte, served from one origin.
 
 ## Orientation
 
-Two services, one Vercel project:
+Two services, deployed together:
 
 - `backend/`: FastAPI app
 - `web/`: Svelte + Vite app
@@ -23,7 +23,6 @@ Unless otherwise specified, all dev tools listed below are managed by mise:
 - [prek](https://prek.j178.dev/llms.txt)
 - [uv](https://docs.astral.sh/uv/llms.txt)
 - [pnpm](https://pnpm.io/motivation)
-- [Vercel CLI](https://vercel.com/get-started.md)
 
 ## Conventions
 
@@ -48,6 +47,5 @@ Prefer deleting a stale comment to updating it.
 
 ## Tech stack
 
-- [Vercel](https://vercel.com/llms.txt)
 - [Svelte](https://svelte.dev/llms.txt)
 - [Vite](https://vite.dev/llms.txt)
