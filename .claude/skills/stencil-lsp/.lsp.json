@@ -1,0 +1,25 @@
+{
+  "ty": {
+    "command": "uv",
+    "args": ["--directory", "backend", "run", "--with", "ty", "ty", "server"],
+    "extensionToLanguage": {
+      ".py": "python",
+      ".pyi": "python"
+    }
+  },
+  "svelte": {
+    "command": "pnpm",
+    "args": ["--dir", "web", "exec", "svelteserver", "--stdio"],
+    "extensionToLanguage": {
+      ".svelte": "svelte"
+    }
+  },
+  "typescript": {
+    "command": "pnpm",
+    "args": ["--dir", "web", "exec", "typescript-language-server", "--stdio"],
+    "extensionToLanguage": {
+      ".ts": "typescript",
+      ".js": "javascript"
+    }
+  }
+}

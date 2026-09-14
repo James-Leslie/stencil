@@ -1,0 +1,149 @@
+/*
+ * Catppuccin Latte and Mocha, remapped onto Pico's tokens.
+ *
+ * Pico styles the plain elements (buttons, inputs, tables, <article> cards),
+ * so the job here is theming it rather than restyling it. Overriding Pico's own
+ * selectors is what makes stylesheets miserable; setting its variables is the
+ * supported way in. Components with no Pico equivalent carry their own scoped
+ * styles and read the --ctp-* values directly.
+ */
+
+:root {
+  color-scheme: light;
+
+  --ctp-base: #eff1f5;
+  --ctp-mantle: #e6e9ef;
+  --ctp-crust: #dce0e8;
+  --ctp-surface0: #ccd0da;
+  --ctp-surface1: #bcc0cc;
+  --ctp-text: #4c4f69;
+  --ctp-subtext0: #6c6f85;
+  --ctp-overlay0: #9ca0b0;
+  --ctp-blue: #1e66f5;
+  --ctp-blue-hover: #0b57e3;
+  --ctp-on-blue: #eff1f5;
+  --ctp-green: #40a02b;
+  --ctp-red: #d20f39;
+  --ctp-mauve: #8839ef;
+  --ctp-peach: #fe640b;
+  --ctp-yellow: #df8e1d;
+}
+
+/* With no explicit choice stored, follow the system. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+
+    --ctp-base: #1e1e2e;
+    --ctp-mantle: #181825;
+    --ctp-crust: #11111b;
+    --ctp-surface0: #313244;
+    --ctp-surface1: #45475a;
+    --ctp-text: #cdd6f4;
+    --ctp-subtext0: #a6adc8;
+    --ctp-overlay0: #6c7086;
+    --ctp-blue: #89b4fa;
+    --ctp-blue-hover: #a6c8ff;
+    --ctp-on-blue: #1e1e2e;
+    --ctp-green: #a6e3a1;
+    --ctp-red: #f38ba8;
+    --ctp-mauve: #cba6f7;
+    --ctp-peach: #fab387;
+    --ctp-yellow: #f9e2af;
+  }
+}
+
+/* An explicit choice wins over the system, in both directions. */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --ctp-base: #1e1e2e;
+  --ctp-mantle: #181825;
+  --ctp-crust: #11111b;
+  --ctp-surface0: #313244;
+  --ctp-surface1: #45475a;
+  --ctp-text: #cdd6f4;
+  --ctp-subtext0: #a6adc8;
+  --ctp-overlay0: #6c7086;
+  --ctp-blue: #89b4fa;
+  --ctp-blue-hover: #a6c8ff;
+  --ctp-on-blue: #1e1e2e;
+  --ctp-green: #a6e3a1;
+  --ctp-red: #f38ba8;
+  --ctp-mauve: #cba6f7;
+  --ctp-peach: #fab387;
+  --ctp-yellow: #f9e2af;
+}
+
+/*
+ * Two greys the palette doesn't name, mixed rather than hardcoded so they
+ * follow the theme: the hairline between rows of one list, and the recessed
+ * strip a card's header and footer sit on.
+ */
+:root {
+  --ctp-divider: color-mix(in srgb, var(--ctp-surface0) 55%, var(--ctp-base));
+  --ctp-recessed: color-mix(in srgb, var(--ctp-mantle) 60%, var(--ctp-base));
+}
+
+/*
+ * :root:root, not :root. Pico's light theme is scoped to
+ * `:root:not([data-theme=dark])`, which outranks a bare `:root` and would win
+ * every one of these. Doubling the pseudo-class matches its specificity, and
+ * loading after Pico settles the tie.
+ */
+:root:root {
+  /*
+   * Pico ramps the root font size from 100% to 131.25% as the viewport widens,
+   * which looks zoomed in on a desktop monitor. A fixed value stops that: a
+   * wide screen should fit more, not magnify less.
+   */
+  --pico-font-size: 100%;
+
+  --pico-border-radius: 0.5rem;
+  --pico-line-height: 1.45;
+
+  /* Page and text. Cards sit on base, the page on mantle, so cards read as raised. */
+  --pico-background-color: var(--ctp-mantle);
+  --pico-color: var(--ctp-text);
+  --pico-h1-color: var(--ctp-text);
+  --pico-h2-color: var(--ctp-text);
+  --pico-h3-color: var(--ctp-text);
+  --pico-muted-color: var(--ctp-subtext0);
+  --pico-muted-border-color: var(--ctp-surface0);
+
+  --pico-primary: var(--ctp-blue);
+  --pico-primary-background: var(--ctp-blue);
+  --pico-primary-border: var(--ctp-blue);
+  --pico-primary-inverse: var(--ctp-on-blue);
+  --pico-primary-hover: var(--ctp-blue-hover);
+  --pico-primary-hover-background: var(--ctp-blue-hover);
+  --pico-primary-hover-border: var(--ctp-blue-hover);
+  --pico-primary-focus: var(--ctp-surface1);
+  --pico-primary-underline: var(--ctp-surface1);
+
+  --pico-secondary: var(--ctp-subtext0);
+  --pico-secondary-background: var(--ctp-surface1);
+  --pico-secondary-border: var(--ctp-surface1);
+  --pico-secondary-inverse: var(--ctp-base);
+  --pico-secondary-hover: var(--ctp-text);
+  --pico-secondary-hover-background: var(--ctp-surface0);
+  --pico-secondary-hover-border: var(--ctp-surface0);
+
+  --pico-card-background-color: var(--ctp-base);
+  --pico-card-border-color: var(--ctp-surface0);
+  --pico-card-sectioning-background-color: var(--ctp-recessed);
+  --pico-card-box-shadow: none;
+
+  --pico-form-element-background-color: var(--ctp-base);
+  --pico-form-element-border-color: var(--ctp-surface0);
+  --pico-form-element-color: var(--ctp-text);
+  --pico-form-element-placeholder-color: var(--ctp-overlay0);
+  --pico-form-element-active-background-color: var(--ctp-base);
+  --pico-form-element-active-border-color: var(--ctp-blue);
+  --pico-form-element-focus-color: var(--ctp-blue);
+
+  --pico-table-border-color: var(--ctp-surface0);
+  --pico-code-background-color: var(--ctp-mantle);
+  --pico-del-color: var(--ctp-red);
+  --pico-ins-color: var(--ctp-green);
+}

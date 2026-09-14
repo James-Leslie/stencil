@@ -1,0 +1,31 @@
+[[repos]]
+repo = "https://github.com/astral-sh/ruff-pre-commit"
+rev = "v0.16.7"
+hooks = [
+    # ruff-check runs before ruff-format so --fix lands before formatting.
+    { id = "ruff-check", args = ["--fix"], types_or = ["python", "pyi"] },
+    { id = "ruff-format", types_or = ["python", "pyi"] },
+]
+
+[[repos]]
+repo = "local"
+
+[[repos.hooks]]
+# Keep agent skills in sync with project dependencies. Packages that ship an
+# .agents/skills directory (fastapi does) get symlinked into .claude/skills.
+id = "library-skills"
+name = "sync agent skills"
+entry = "uvx --from library-skills library-skills install --claude --all --yes"
+language = "system"
+pass_filenames = false
+files = '(pyproject\.toml|uv\.lock)$'
+
+[[repos.hooks]]
+# Type-checks the whole project via Astral's `ty`, so it ignores the staged
+# filenames and runs once per commit.
+id = "ty"
+name = "ty check"
+entry = "uv check"
+language = "system"
+pass_filenames = false
+files = '(\.py|pyproject\.toml|uv\.lock)$'

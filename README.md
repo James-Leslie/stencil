@@ -1,28 +1,24 @@
 # Stencil
 
-A batteries-included Python project template. It ships a modern toolchain wired
-together so a new project is green from the first commit:
+A project template: **FastAPI** and **Svelte 5**, deployed as one Vercel
+project so `/api` and the app share an origin.
 
-- **[mise]** — manages the Python (and, later, Node) runtimes.
-- **[uv]** — manages Python packages and the virtualenv.
-- **[prek]** — runs the git hooks (ruff lint + format, `ty` type checking).
-- **GitHub Actions** — runs the same gate in CI (`mise run check`).
-- **Claude Code** — a `SessionStart` hook hydrates the toolchain in cloud sessions.
+- `backend/` — FastAPI, packaged by [uv], type-checked by `ty`, linted by ruff.
+- `web/` — Svelte 5 + Vite + TypeScript, on [pnpm], formatted by Prettier.
 
-It's Python-first today and **frontend-ready**: the `.gitignore` and the cloud
-session hook already account for a `frontend/` (SvelteKit + pnpm) half, so adding
-one later activates automatically — see [Adding a frontend](#5-adding-a-frontend).
+Every tool is pinned in `mise.toml`, so a clone, a CI run and a new machine all
+resolve the same toolchain. [prek] runs the hooks on commit and GitHub Actions
+runs the same checks on the same pinned versions.
 
 ## 0. Prerequisites
 
-This project assumes **mise** and **uv** are installed and configured on your
-machine (mise manages the language runtimes, uv manages Python packages and the
-venv). **pnpm** is only needed once you add a frontend — skip it for now.
+Just [mise]. It installs and manages everything else this project needs:
+Python, uv, node, pnpm, prek and the Vercel CLI.
 
-If you haven't set these up yet, follow the one-time machine setup:
+If you haven't set up mise yet, follow the one-time machine setup:
 **[Dev Environment Setup](https://gist.github.com/James-Leslie/41caf391299dee81b91bd01a8fa156f8)**.
 
-## 1. Getting Started
+## 1. Getting started
 
 Create a new repo from this template with the GitHub CLI:
 
@@ -30,77 +26,81 @@ Create a new repo from this template with the GitHub CLI:
 gh repo create my-project --template James-Leslie/stencil --private --clone
 ```
 
-From a freshly created repo, install everything pinned in `mise.toml`:
+Then, from the new repo:
 
 ```sh
-mise cache clear   # avoid resolving "latest" against a stale version cache
+mise trust
 mise install
 ```
 
-This template intentionally pins `"latest"` for everything, so each new project
-starts on the newest runtimes. Once initialised, freeze the version:
+That's the whole setup. `mise install` installs the pinned tools, and its
+`postinstall` hook does the rest: `prek install` wires up the git hooks and
+`mise deps install` installs both services' dependencies (uv in `backend/`,
+pnpm in `web/`).
 
-```sh
-mise use python --pin
-```
+Secrets are not in the repo. Copy `.env.example` to `.env` and fill it in; mise
+loads it for both services. Once the project is linked to Vercel, `vercel env pull` writes `.env.local`, which is loaded on top.
 
-Set up the Python environment with uv:
+## 2. Making it yours
 
-```sh
-uv sync
-```
-
-Install prek's git hook (once per clone):
-
-```sh
-prek install
-```
-
-## 2. Using this template
-
-After creating a repo from Stencil, make it yours:
-
-- [ ] Rename the package in `pyproject.toml`: set `[project].name` and
-  `[tool.uv.build-backend].module-name` (currently `example-python-project`
-  / `core`).
-- [ ] Rename `src/core/` to match the new `module-name`, and update imports in
-  `tests/`.
-- [ ] Set `[project].description` (currently a placeholder).
-- [ ] Update this README's title and intro.
+- [ ] Rename the Python package: `[project].name` in `backend/pyproject.toml`
+  (currently `core`), the `src/core/` directory, and the `core.server:app`
+  entrypoints in `backend/pyproject.toml` and `backend/server.py`.
+- [ ] Set `[project].description` in `backend/pyproject.toml`.
+- [ ] Set the `<title>` in `web/index.html` and swap `web/public/favicon.svg`.
+- [ ] Rename `.claude/skills/stencil-lsp/` and its `name` in `plugin.json`.
+- [ ] Update this README, `CLAUDE.md`, and the two service `CLAUDE.md` files.
 - [ ] Choose a license — `LICENSE` ships as MIT; replace it if you want
   something else.
-- [ ] Pin the runtime: `mise use python --pin`.
-- [ ] Run the gate to confirm everything is green: `mise run check`.
+- [ ] Add a `"regions"` key to `vercel.json` if you want to pin a deploy region.
+- [ ] Freshen the pins: `mise up`, then `uv sync -U` and `pnpm up --latest`.
+- [ ] Run `mise run check` and `prek run --all-files` to confirm it's green.
 
 ## 3. Everyday commands
 
 ```sh
-mise run test     # run the test suite (pytest)
-mise run check    # run the full gate: tests + all prek hooks (lint, format, types)
-uv add <pkg>      # add a runtime dependency
-uv add --dev <pkg>  # add a dev dependency
-uv sync           # reconcile the venv with uv.lock
+mise dev      # both dev servers
+mise api      # FastAPI alone, on :8000
+mise web      # Vite alone, on :5173
+mise check    # type-check both services
+mise build    # production build of the web app
+
+uv add <pkg>              # backend runtime dependency (run in backend/)
+pnpm add <pkg>            # web dependency (run in web/)
+mise use --pin <tool>@latest   # add or bump a mise-managed tool
 ```
 
-`mise run check` is the single source of truth for the gate — CI runs the exact
-same command, so a green local run means a green CI run.
+Vite proxies `/api` to the backend in dev, matching how Vercel routes in
+production, which also keeps a session cookie working.
 
 ## 4. What runs on commit
 
-`prek` runs on every commit (see `prek.toml`): whitespace/EOF fixers, `ruff`
-lint + format, `mdformat` (Markdown formatting), and `uv check` (type checking
-via `ty`).
+`prek` discovers three configs and runs each with its own directory as the
+working directory:
 
-## 5. Adding a frontend
+| Config              | Hooks                                                   |
+| ------------------- | ------------------------------------------------------- |
+| `prek.toml`         | whitespace and EOF fixers, large-file guard, `mdformat` |
+| `backend/prek.toml` | `ruff` lint + format, `ty` type check, agent-skill sync |
+| `web/prek.toml`     | `prettier`                                              |
 
-The template is frontend-ready: `.gitignore` already ignores `node_modules/`,
-`.svelte-kit/`, and `frontend/build/`, and `.claude/hooks/session-start.sh`
-installs frontend deps when `frontend/package.json` exists. To add one:
+CI runs the same hooks with `prek run --all-files`, so a green local commit is a
+green CI run.
 
-1. Install **pnpm** (see the dev environment gist above).
-2. Scaffold a SvelteKit app into `frontend/`.
-3. The cloud session hook will pick it up automatically on the next session.
+## 5. Agent tooling
+
+- `CLAUDE.md` at the root and in each service carries the conventions.
+- `.claude/skills/stencil-lsp/` points Claude at the same language servers CI
+  uses: `ty` for Python, `svelteserver` and `typescript-language-server` for the
+  web app.
+- Svelte skills are vendored in `.agents/skills/` and symlinked into
+  `.claude/skills/`, tracked by `skills-lock.json`.
+- The `library-skills` hook in `backend/prek.toml` syncs skills shipped by
+  installed Python packages (FastAPI ships one) whenever dependencies change.
+- `.claude/hooks/session-start.sh` rebuilds the toolchain in Claude Code cloud
+  sessions, which start from a fresh clone each time. It's a no-op locally.
 
 [mise]: https://mise.jdx.dev
+[pnpm]: https://pnpm.io
 [prek]: https://prek.j178.dev
 [uv]: https://docs.astral.sh/uv/

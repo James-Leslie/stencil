@@ -1,12 +1,21 @@
 version: 2
 updates:
-  # Python dependencies (uv reads pyproject.toml / uv.lock)
+  # Python dependencies (uv reads backend/pyproject.toml and backend/uv.lock)
   - package-ecosystem: "uv"
-    directory: "/"
+    directory: "/backend"
     schedule:
       interval: "weekly"
     groups:
       python-minor-patch:
+        update-types: ["minor", "patch"]
+
+  # Web dependencies (npm ecosystem covers pnpm lockfiles)
+  - package-ecosystem: "npm"
+    directory: "/web"
+    schedule:
+      interval: "weekly"
+    groups:
+      web-minor-patch:
         update-types: ["minor", "patch"]
 
   # GitHub Actions used in workflows

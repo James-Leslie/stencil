@@ -1,9 +1,9 @@
 name: prek autoupdate
 
-# prek pins each hook repo to a fixed `rev` in prek.toml for reproducibility,
-# which means hooks don't update on their own (Dependabot doesn't cover them).
-# The `autoupdate` job bumps those revs on a schedule and opens a PR so the
-# update is reviewed rather than landing silently. The `automerge` job then
+# prek pins each hook repo to a fixed `rev` for reproducibility, which means
+# hooks don't update on their own (Dependabot doesn't cover them). The
+# `autoupdate` job bumps those revs on a schedule and opens a PR so the update
+# is reviewed rather than landing silently. The `automerge` job then
 # squash-merges that PR once you approve it — scoped to the bot branch so your
 # other PRs are untouched.
 on:
@@ -24,14 +24,12 @@ jobs:
     if: github.event_name != 'pull_request_review'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6
+      - uses: actions/checkout@v6
 
-      # Installs and activates the tools pinned in mise.toml (including prek),
-      # so this job uses the same prek version as local development and CI.
-      - name: Set up mise
-        uses: jdx/mise-action@v4
+      # Uses the prek version pinned in mise.toml, same as local and CI.
+      - uses: jdx/mise-action@v4
 
+      # Covers the root config and both services', which prek discovers.
       - name: Run prek autoupdate
         run: prek autoupdate
 
@@ -41,8 +39,8 @@ jobs:
           commit-message: "chore: prek autoupdate"
           title: "chore: prek autoupdate"
           body: |
-            Automated `prek autoupdate` run — bumps pinned hook `rev`s in `prek.toml`
-            to their latest releases.
+            Automated `prek autoupdate` run — bumps pinned hook `rev`s to their
+            latest releases, across the root, `backend/` and `web/` configs.
 
             Review the diff and let CI confirm the new versions before merging.
           branch: chore/prek-autoupdate
