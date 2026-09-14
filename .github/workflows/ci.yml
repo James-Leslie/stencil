@@ -16,7 +16,7 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       # Installs the tools pinned in mise.toml, then runs its postinstall hook,
       # which installs both services' dependencies. One source of truth for the
