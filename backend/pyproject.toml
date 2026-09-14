@@ -15,8 +15,6 @@ dependencies = [
 # Enables `uv run fastapi dev`
 entrypoint = "core.server:app"
 
-[tool.vercel]
-entrypoint = "server:app"
 
 [build-system]
 requires = ["uv_build>=0.12.13,<0.13.0"]

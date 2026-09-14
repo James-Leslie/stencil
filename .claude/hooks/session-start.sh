@@ -1,5 +1,5 @@
 #!/bin/bash
-# SessionStart hook — hydrate the project toolchain for Claude Code on the web.
+# SessionStart hook: hydrate the project toolchain for Claude Code on the web.
 #
 # Cloud sessions start from a fresh clone in an ephemeral container, so the
 # toolchain has to be (re)built each session. Locally this is a no-op: your
@@ -8,7 +8,7 @@
 #
 # Optional speed-up: configure a setup script in the cloud environment (web UI)
 # that installs mise and pre-downloads the pinned runtimes into the cached
-# snapshot. This hook self-heals without one (it installs mise below) — just
+# snapshot. This hook self-heals without one (it installs mise below), just
 # more slowly on the first, uncached session.
 set -euo pipefail
 

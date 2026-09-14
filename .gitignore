@@ -9,10 +9,7 @@ wheels/
 # Virtual environments
 .venv
 
-# Vercel
-.vercel
-
-# Secrets. .env is hand-written, .env.local is written by `vercel env pull`.
+# Secrets. .env is hand-written, .env.local holds machine-specific overrides.
 .env
 .env.*
 !.env.example

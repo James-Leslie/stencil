@@ -6,7 +6,7 @@ table is the `{#if}` chain in `src/App.svelte`. Adding a page means a component
 and a branch there.
 
 `src/lib/api.ts` is the only place that calls `fetch`. Every request goes to
-`/api`, which Vite proxies in dev and Vercel rewrites in production.
+`/api`, which Vite proxies in dev and the host routes in production.
 
 ## Comments
 

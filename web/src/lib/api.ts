@@ -2,9 +2,9 @@
  * Every call the browser app makes to FastAPI. Pages import this; components
  * never do.
  *
- * In dev, Vite proxies /api to :8000; in production vercel.json rewrites it to
- * the api service. Either way it's the same origin, so a session cookie would
- * ride along without any CORS setup.
+ * In dev, Vite proxies /api to :8000; in production the host routes it to the
+ * backend. Either way it's the same origin, so a session cookie would ride
+ * along without any CORS setup.
  */
 
 export type Health = { status: string }

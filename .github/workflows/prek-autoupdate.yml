@@ -4,7 +4,7 @@ name: prek autoupdate
 # hooks don't update on their own (Dependabot doesn't cover them). The
 # `autoupdate` job bumps those revs on a schedule and opens a PR so the update
 # is reviewed rather than landing silently. The `automerge` job then
-# squash-merges that PR once you approve it — scoped to the bot branch so your
+# squash-merges that PR once you approve it, scoped to the bot branch so your
 # other PRs are untouched.
 on:
   schedule:
@@ -39,7 +39,7 @@ jobs:
           commit-message: "chore: prek autoupdate"
           title: "chore: prek autoupdate"
           body: |
-            Automated `prek autoupdate` run — bumps pinned hook `rev`s to their
+            Automated `prek autoupdate` run, bumping pinned hook `rev`s to their
             latest releases, across the root, `backend/` and `web/` configs.
 
             Review the diff and let CI confirm the new versions before merging.

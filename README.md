@@ -1,10 +1,10 @@
 # Stencil
 
-A project template: **FastAPI** and **Svelte 5**, deployed as one Vercel
-project so `/api` and the app share an origin.
+A project template: **FastAPI** and **Svelte 5**, deployed together so `/api`
+and the app share an origin. No deployment platform is assumed.
 
-- `backend/` — FastAPI, packaged by [uv], type-checked by `ty`, linted by ruff.
-- `web/` — Svelte 5 + Vite + TypeScript, on [pnpm], formatted by Prettier.
+- `backend/`: FastAPI, packaged by [uv], type-checked by `ty`, linted by ruff.
+- `web/`: Svelte 5 + Vite + TypeScript, on [pnpm], formatted by Prettier.
 
 Every tool is pinned in `mise.toml`, so a clone, a CI run and a new machine all
 resolve the same toolchain. [prek] runs the hooks on commit and GitHub Actions
@@ -13,7 +13,7 @@ runs the same checks on the same pinned versions.
 ## 0. Prerequisites
 
 Just [mise]. It installs and manages everything else this project needs:
-Python, uv, node, pnpm, prek and the Vercel CLI.
+Python, uv, node, pnpm and prek.
 
 If you haven't set up mise yet, follow the one-time machine setup:
 **[Dev Environment Setup](https://gist.github.com/James-Leslie/41caf391299dee81b91bd01a8fa156f8)**.
@@ -39,7 +39,8 @@ That's the whole setup. `mise install` installs the pinned tools, and its
 pnpm in `web/`).
 
 Secrets are not in the repo. Copy `.env.example` to `.env` and fill it in; mise
-loads it for both services. Once the project is linked to Vercel, `vercel env pull` writes `.env.local`, which is loaded on top.
+loads it for both services. `.env.local` is loaded on top, for machine-specific
+overrides or values pulled from a host's CLI.
 
 ## 2. Making it yours
 
@@ -50,9 +51,8 @@ loads it for both services. Once the project is linked to Vercel, `vercel env pu
 - [ ] Set the `<title>` in `web/index.html` and swap `web/public/favicon.svg`.
 - [ ] Rename `.claude/skills/stencil-lsp/` and its `name` in `plugin.json`.
 - [ ] Update this README, `CLAUDE.md`, and the two service `CLAUDE.md` files.
-- [ ] Choose a license — `LICENSE` ships as MIT; replace it if you want
+- [ ] Choose a license. `LICENSE` ships as MIT; replace it if you want
   something else.
-- [ ] Add a `"regions"` key to `vercel.json` if you want to pin a deploy region.
 - [ ] Freshen the pins: `mise up`, then `uv sync -U` and `pnpm up --latest`.
 - [ ] Run `mise run check` and `prek run --all-files` to confirm it's green.
 
@@ -70,8 +70,10 @@ pnpm add <pkg>            # web dependency (run in web/)
 mise use --pin <tool>@latest   # add or bump a mise-managed tool
 ```
 
-Vite proxies `/api` to the backend in dev, matching how Vercel routes in
-production, which also keeps a session cookie working.
+Vite proxies `/api` to the backend in dev, so the two services share an origin
+and a session cookie keeps working. Reproduce that in production with whatever
+your host offers: `web/dist` served as static files, `uv run fastapi run` for
+the backend, and `/api` routed to it.
 
 ## 4. What runs on commit
 
