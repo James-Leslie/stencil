@@ -1,7 +1,6 @@
-# Configuration file for `prek`, a git hook framework written in Rust.
-# See https://prek.j178.dev for more information.
-#:schema https://www.schemastore.org/prek.json
-
+# Hooks that apply to the whole repo. Language-specific hooks live in
+# backend/prek.toml and web/prek.toml, which prek discovers and runs with
+# that directory as the working directory.
 [[repos]]
 repo = "builtin"
 hooks = [
@@ -11,29 +10,12 @@ hooks = [
 ]
 
 [[repos]]
-repo = "https://github.com/astral-sh/ruff-pre-commit"
-rev = "v0.15.17"
-hooks = [
-    # ruff-check runs before ruff-format so --fix lands before formatting.
-    { id = "ruff-check", args = ["--fix"] },
-    { id = "ruff-format" },
-]
-
-[[repos]]
 repo = "https://github.com/hukkin/mdformat"
 rev = "1.0.0"
 hooks = [
-    # Format Markdown to a consistent CommonMark style. mdformat-gfm adds
-    # GitHub-flavored support (tables, task lists, strikethrough) so README
-    # constructs survive formatting instead of being escaped.
-    { id = "mdformat", additional_dependencies = ["mdformat-gfm"] },
-]
-
-[[repos]]
-repo = "local"
-hooks = [
-    # `uv check` type-checks the whole project (via Astral's `ty`), so it
-    # ignores the staged filenames and runs once per commit. Scope it to
-    # changes that can affect type checking.
-    { id = "uv-check", name = "uv check", entry = "uv check", language = "system", pass_filenames = false, files = '(\.py|pyproject\.toml|uv\.lock)$' },
+    # mdformat-gfm adds GitHub-flavored support (tables, task lists,
+    # strikethrough) so README constructs survive formatting. Vendored agent
+    # skills are excluded: they belong to their upstream and skills-lock.json
+    # tracks them by hash, so reformatting them would read as drift.
+    { id = "mdformat", additional_dependencies = ["mdformat-gfm"], exclude = '^\.agents/skills/' },
 ]

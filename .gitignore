@@ -1,18 +1,22 @@
-# Python
+# Python-generated files
 __pycache__/
-*.py[cod]
-.venv/
-.pytest_cache/
-.ruff_cache/
+*.py[oc]
 build/
 dist/
-*.egg-info/
+wheels/
+*.egg-info
 
-# Node / frontend
-node_modules/
-.svelte-kit/
-frontend/build/
+# Virtual environments
+.venv
 
-# mise / local tool state
+# Vercel
+.vercel
+
+# Secrets. .env is hand-written, .env.local is written by `vercel env pull`.
+.env
+.env.*
+!.env.example
+
+# mise local overrides
 .mise.local.toml
 mise.local.toml

@@ -25,40 +25,20 @@ if ! command -v mise >/dev/null 2>&1; then
   curl -fsSL https://mise.run | sh
 fi
 
-# Install the pinned Python/Node from mise.toml. Idempotent: a no-op once the
-# cached snapshot already has them. `mise trust` is required because mise won't
-# read an untrusted config file.
+# mise.toml pins every tool this project needs, and its postinstall hook
+# finishes the job: `prek install` for the git hooks, `mise deps install` for
+# both services' dependencies (uv in backend/, pnpm in web/). Idempotent, so
+# this is a no-op once the cached snapshot already has them. `mise trust` is
+# required because mise won't read an untrusted config file.
 mise trust
 mise install
 
-# Put mise's tools on PATH for the rest of this script. --shims is the
-# non-interactive-safe activation (plain PATH exports, no prompt hook).
-eval "$(mise activate bash --shims)"
-
-# Python deps onto mise's interpreter (uv is pre-installed in the cloud image).
-# Guarded so a frontend-only project (Python half deleted) skips cleanly.
-if [ -f pyproject.toml ]; then
-  uv sync
-fi
-
-# Frontend deps only when the frontend half is present — projects created from
-# this template may delete frontend/, and the hook must skip cleanly when absent.
-if [ -f frontend/package.json ]; then
-  (cd frontend && pnpm install)
-fi
-
-# Wire up git hooks. prek's hook lives in .git/hooks, which is local-only and
-# recreated on every fresh clone, so it has to be reinstalled each session.
-prek install
-
 # Persist the toolchain on PATH for the rest of the session's Bash commands,
 # through $CLAUDE_ENV_FILE (the supported, non-interactive-safe channel) rather
-# than ~/.bashrc, which is guarded out of non-interactive shells.
+# than ~/.bashrc, which is guarded out of non-interactive shells. --shims is
+# the non-interactive-safe activation: plain PATH exports, no prompt hook.
 if [ -n "${CLAUDE_ENV_FILE:-}" ]; then
   mise activate bash --shims >> "$CLAUDE_ENV_FILE"
 fi
 
-ready="mise"
-[ -f pyproject.toml ] && ready="$ready + uv"
-[ -f frontend/package.json ] && ready="$ready + pnpm"
-echo "Toolchain ready ($ready)."
+echo "Toolchain ready (mise + uv + pnpm)."

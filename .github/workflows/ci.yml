@@ -13,30 +13,25 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  python:
+  check:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6
+      - uses: actions/checkout@v6
 
-      # Installs and activates the tools pinned in mise.toml (python, prek),
-      # so CI uses the same runtime definition as local development.
-      - name: Set up mise
-        uses: jdx/mise-action@v4
+      # Installs the tools pinned in mise.toml, then runs its postinstall hook,
+      # which installs both services' dependencies. One source of truth for the
+      # toolchain, shared with local development.
+      - uses: jdx/mise-action@v4
 
-      # uv is machine-level locally (not in mise.toml), so CI installs it explicitly.
-      - name: Install uv
-        uses: astral-sh/setup-uv@v8.2.0
-        with:
-          enable-cache: true
-
-      - name: Sync dependencies
-        run: uv sync
-
-      # Run the same `check` task as local development so mise.toml is the
-      # single source of truth for the gate: it runs pytest, then the full
-      # prek hook suite (lint, format, type checking, with versions pinned in
-      # prek.toml). Fixers run in place; if any hook modifies a file the step
-      # exits non-zero, which blocks the PR — exactly the gate we want.
-      - name: Run checks
+      # The same task you run locally: type-checks the backend with `ty` and
+      # the web app with svelte-check + tsc.
+      - name: Type check
         run: mise run check
+
+      # Fixers run in place; if any hook modifies a file the step exits
+      # non-zero, which blocks the PR — exactly the gate we want.
+      - name: Lint and format
+        run: prek run --all-files --show-diff-on-failure
+
+      - name: Build
+        run: mise run build
