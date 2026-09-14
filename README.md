@@ -72,8 +72,8 @@ mise use --pin <tool>@latest   # add or bump a mise-managed tool
 
 Vite proxies `/api` to the backend in dev, so the two services share an origin
 and a session cookie keeps working. Reproduce that in production with whatever
-your host offers: `web/dist` served as static files, `core.server:app` run as an
-ASGI app, and `/api` routed to it.
+your host offers: `web/dist` served as static files, `uv run fastapi run` for
+the backend, and `/api` routed to it.
 
 ## 4. What runs on commit
 
